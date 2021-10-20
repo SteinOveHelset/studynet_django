@@ -14,6 +14,12 @@ def get_courses(request):
     return Response(serializer.data)
 
 @api_view(['GET'])
+def get_frontpage_courses(request):
+    courses = Course.objects.all()[0:4]
+    serializer = CourseListSerializer(courses, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
 def get_course(request, slug):
     course = Course.objects.get(slug=slug)
     course_serializer = CourseDetailSerializer(course)
@@ -43,4 +49,6 @@ def add_comment(request, course_slug, lesson_slug):
 
     comment = Comment.objects.create(course=course, lesson=lesson, name=name, content=content, created_by=request.user)
 
-    return Response({'message': 'The comment was added!'})
+    serializer = CommentsSerializer(comment)
+
+    return Response(serializer.data)
