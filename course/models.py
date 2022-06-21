@@ -24,6 +24,9 @@ class Course(models.Model):
     created_by = models.ForeignKey(User, related_name='courses', on_delete=models.CASCADE)
     image = models.ImageField(upload_to='uploads', blank=True, null=True)
 
+    class Meta:
+        ordering = ('-created_at',)
+
     def __str__(self):
         return self.title
 

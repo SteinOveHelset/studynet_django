@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from django.shortcuts import render
+from django.utils.text import slugify
 from rest_framework import serializers
 
 from rest_framework.response import Response
@@ -7,6 +8,27 @@ from rest_framework.decorators import api_view, authentication_classes, permissi
 
 from .models import Course, Lesson, Comment, Category
 from .serializers import CourseListSerializer, CourseDetailSerializer, LessonListSerializer, CommentsSerializer, CategorySerializer, QuizSerializer, UserSerializer
+
+@api_view(['POST'])
+def create_course(request):
+    print(request.data)
+
+    course = Course.objects.create(
+        title=request.data.get('title'),
+        slug=slugify(request.data.get('title')),
+        short_description=request.data.get('short_description'),
+        long_description=request.data.get('long_description'),
+        created_by=request.user
+    )
+
+    for id in request.data.get('categories'):
+        course.categories.add(id)
+    
+    course.save()
+
+    print(course)
+
+    return Response({'yo': 'yo'})
 
 @api_view(['GET'])
 def get_quiz(request, course_slug, lesson_slug):
